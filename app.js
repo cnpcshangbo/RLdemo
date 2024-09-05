@@ -19,8 +19,8 @@ function initQTable() {
     }
 }
 
-function chooseAction(state) {
-    if (Math.random() < EPSILON) {
+function chooseAction(state, epsilon = EPSILON) {
+    if (Math.random() < epsilon) {
         return ACTIONS[Math.floor(Math.random() * ACTIONS.length)];
     } else {
         const stateActions = qTable[state];
@@ -113,8 +113,33 @@ function updateGrid() {
     }
 }
 
+function demonstratePolicy() {
+    agentPos = { x: 0, y: 0 };
+    updateGrid();
+    
+    function moveStep() {
+        if (agentPos.x === goalPos.x && agentPos.y === goalPos.y) {
+            document.getElementById('info').textContent = 'Goal reached!';
+            return;
+        }
+        
+        const state = `${agentPos.x},${agentPos.y}`;
+        const action = chooseAction(state, 0); // Use greedy policy (epsilon = 0)
+        const newPos = takeAction(action);
+        agentPos = newPos;
+        
+        updateGrid();
+        document.getElementById('info').textContent = `Action: ${action}`;
+        
+        setTimeout(moveStep, 500); // Move every 500ms
+    }
+    
+    moveStep();
+}
+
 initQTable();
 updateGrid();
 
 document.getElementById('step').addEventListener('click', step);
 document.getElementById('train').addEventListener('click', () => train());
+document.getElementById('demonstrate').addEventListener('click', demonstratePolicy);
