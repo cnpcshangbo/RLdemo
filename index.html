@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RL Grid World Demo</title>
+    <style>
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(5, 100px);
+            gap: 1px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .agent { background-color: #ff9999; }
+        .goal { background-color: #99ff99; }
+        .q-values {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            width: 100%;
+            height: 100%;
+        }
+        .q-value {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>RL Grid World Demo</h1>
+    <div id="grid"></div>
+    <button id="step">Step</button>
+    <button id="train">Train</button>
+    <p id="info"></p>
+    <script src="app.js"></script>
+</body>
+</html>
