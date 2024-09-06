@@ -5,10 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RL Grid World Demo</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
         #grid {
             display: grid;
             grid-template-columns: repeat(5, 100px);
             gap: 1px;
+            margin-bottom: 20px;
         }
         .cell {
             width: 100px;
@@ -22,6 +29,7 @@
         }
         .agent { background-color: #ff9999; }
         .goal { background-color: #99ff99; }
+        .highlighted-path { border: 2px solid #ff00ff; }
         .q-values {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -35,18 +43,80 @@
             justify-content: center;
             font-size: 10px;
         }
-        .highlighted-path {
-            border: 2px solid #ff00ff;
+        .explanation {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>RL Grid World Demo</h1>
+    <h1>Reinforcement Learning Grid World Demo</h1>
+    
+    <div class="explanation">
+        <h2>How it works:</h2>
+        <p>This demo shows a simple reinforcement learning (RL) agent learning to navigate a 5x5 grid world. The agent starts at the top-left corner (0,0) and aims to reach the goal at the bottom-right corner (4,4).</p>
+        <p>The agent learns using Q-learning, a type of RL algorithm. Each cell shows the Q-values for moving in each direction (up, right, down, left). Higher Q-values indicate more promising actions.</p>
+    </div>
+
     <div id="grid"></div>
-    <button id="step">Step</button>
-    <button id="train">Train</button>
-    <button id="demonstrate">Demonstrate</button>
+
+    <div class="controls">
+        <button id="step">Step</button>
+        <button id="train">Train</button>
+        <button id="demonstrate">Demonstrate</button>
+    </div>
+
     <p id="info"></p>
+
+    <div class="explanation">
+        <h3>Controls:</h3>
+        <ul>
+            <li><strong>Step:</strong> Make the agent take one action based on its current policy.</li>
+            <li><strong>Train:</strong> Run 1000 episodes of training to improve the agent's policy.</li>
+            <li><strong>Demonstrate:</strong> Show the agent's learned behavior by moving to the goal.</li>
+        </ul>
+        <h3>Grid Legend:</h3>
+        <ul>
+            <li><strong>A:</strong> Agent's current position</li>
+            <li><strong>G:</strong> Goal position</li>
+            <li><strong>Numbers:</strong> Q-values for each action (up, right, down, left)</li>
+            <li><strong>Magenta border:</strong> Path taken during demonstration</li>
+        </ul>
+    </div>
+
+    <div class="explanation">
+        <h2>How Q-values are updated:</h2>
+        <p>Q-values are updated using the Q-learning algorithm:</p>
+        <p><strong>Q(s, a) = Q(s, a) + α * [R + γ * max(Q(s', a')) - Q(s, a)]</strong></p>
+        <p>Where:</p>
+        <ul>
+            <li>Q(s, a) is the Q-value for the current state s and action a</li>
+            <li>α (alpha) is the learning rate (${LEARNING_RATE} in this demo)</li>
+            <li>R is the reward received for taking action a in state s</li>
+            <li>γ (gamma) is the discount factor (${DISCOUNT_FACTOR} in this demo)</li>
+            <li>max(Q(s', a')) is the maximum Q-value for the next state s' over all possible actions a'</li>
+        </ul>
+        <p>This update happens after each action the agent takes, gradually improving its policy.</p>
+    </div>
+
+    <div class="explanation">
+        <h2>Reward Structure:</h2>
+        <p>In this demo, the reward is determined as follows:</p>
+        <ul>
+            <li><strong>Reaching the goal (4,4):</strong> +1 reward</li>
+            <li><strong>Any other action:</strong> -0.1 reward</li>
+        </ul>
+        <p>This reward structure encourages the agent to reach the goal as quickly as possible while minimizing unnecessary steps.</p>
+        <p>Note: The reward is not based on the distance to the goal. This simple structure is common in introductory RL problems.</p>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>

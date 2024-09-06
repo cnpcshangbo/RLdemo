@@ -63,21 +63,45 @@ function step() {
     agentPos = newPos;
     
     updateGrid();
-    document.getElementById('info').textContent = `Action: ${action}, Reward: ${reward}`;
+    document.getElementById('info').textContent = `Action: ${action}, Reward: ${reward.toFixed(2)}, New position: (${newPos.x}, ${newPos.y})`;
 }
 
 function train(episodes = 1000) {
+    let totalReward = 0;
+    let totalSteps = 0;
+
     for (let i = 0; i < episodes; i++) {
         agentPos = { x: 0, y: 0 };
+        let episodeReward = 0;
+        let steps = 0;
+
         while (!(agentPos.x === goalPos.x && agentPos.y === goalPos.y)) {
-            step();
+            const state = `${agentPos.x},${agentPos.y}`;
+            const action = chooseAction(state);
+            const newPos = takeAction(action);
+            const reward = getReward(newPos);
+            const nextState = `${newPos.x},${newPos.y}`;
+            
+            updateQTable(state, action, nextState, reward);
+            agentPos = newPos;
+            
+            episodeReward += reward;
+            steps++;
         }
-        if (i % 100 === 0) {  // Update grid every 100 episodes
+
+        totalReward += episodeReward;
+        totalSteps += steps;
+
+        if (i % 100 === 0) {
             updateGrid();
+            document.getElementById('info').textContent = `Training progress: ${i + 1}/${episodes} episodes`;
         }
     }
+
     updateGrid();
-    document.getElementById('info').textContent = 'Training complete!';
+    const avgReward = totalReward / episodes;
+    const avgSteps = totalSteps / episodes;
+    document.getElementById('info').textContent = `Training complete! Average reward: ${avgReward.toFixed(2)}, Average steps: ${avgSteps.toFixed(2)}`;
 }
 
 function updateGrid() {
@@ -127,7 +151,7 @@ function demonstratePolicy() {
     
     function moveStep() {
         if (agentPos.x === goalPos.x && agentPos.y === goalPos.y) {
-            document.getElementById('info').textContent = 'Goal reached!';
+            document.getElementById('info').textContent = `Goal reached in ${pathCells.length} steps!`;
             highlightPath();
             return;
         }
@@ -139,7 +163,7 @@ function demonstratePolicy() {
         agentPos = newPos;
         
         updateGrid();
-        document.getElementById('info').textContent = `Action: ${action}`;
+        document.getElementById('info').textContent = `Demonstrating: Action: ${action}, Position: (${newPos.x}, ${newPos.y})`;
         
         setTimeout(moveStep, 500); // Move every 500ms
     }
