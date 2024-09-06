@@ -8,6 +8,8 @@ let agentPos = { x: 0, y: 0 };
 const goalPos = { x: 4, y: 4 };
 let qTable = {};
 
+let pathCells = [];
+
 function initQTable() {
     for (let y = 0; y < GRID_SIZE; y++) {
         for (let x = 0; x < GRID_SIZE; x++) {
@@ -91,6 +93,11 @@ function updateGrid() {
                 cell.classList.add('goal');
             }
             
+            // Add highlighted-path class if this cell is in the path
+            if (pathCells.includes(`${x},${y}`)) {
+                cell.classList.add('highlighted-path');
+            }
+            
             const qValues = document.createElement('div');
             qValues.className = 'q-values';
             
@@ -115,15 +122,18 @@ function updateGrid() {
 
 function demonstratePolicy() {
     agentPos = { x: 0, y: 0 };
+    pathCells = []; // Reset path cells
     updateGrid();
     
     function moveStep() {
         if (agentPos.x === goalPos.x && agentPos.y === goalPos.y) {
             document.getElementById('info').textContent = 'Goal reached!';
+            highlightPath();
             return;
         }
         
         const state = `${agentPos.x},${agentPos.y}`;
+        pathCells.push(state); // Add current position to path
         const action = chooseAction(state, 0); // Use greedy policy (epsilon = 0)
         const newPos = takeAction(action);
         agentPos = newPos;
@@ -135,6 +145,15 @@ function demonstratePolicy() {
     }
     
     moveStep();
+}
+
+function highlightPath() {
+    const grid = document.getElementById('grid');
+    pathCells.forEach(cell => {
+        const [x, y] = cell.split(',').map(Number);
+        const index = y * GRID_SIZE + x;
+        grid.children[index].classList.add('highlighted-path');
+    });
 }
 
 initQTable();
